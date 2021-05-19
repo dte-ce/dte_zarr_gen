@@ -65,7 +65,8 @@ setup(
         'Topic :: System :: Systems Administration :: Authentication/Directory',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    description="Generate zarr formated data on object store from source netCDF files for DTE project",
+    description="Generate zarr formated data on object store from source "
+        "netCDF files for DTE project",
 
     license=__license__,
 

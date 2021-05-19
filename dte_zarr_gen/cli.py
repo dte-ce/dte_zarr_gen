@@ -10,8 +10,11 @@ import sys
 import click
 import json
 import os
+import logging
 
 from dte_zarr_gen.writer import create_zarr, DEF_CHUNK_SIZE_MBYTES
+
+log = logging.getLogger(__name__)
 
 THIS_DIR = os.path.dirname(__file__)
 DEF_CREDS_FILENAME = "creds.json"
@@ -33,10 +36,19 @@ DEF_CREDS_FILEPATH = os.path.join(THIS_DIR, DEF_CREDS_FILENAME)
     help='File path to JSON-formatted file containing S3 "key" and "secret"')
 @click.option('-m', '--chunk-size-mbytes', default=DEF_CHUNK_SIZE_MBYTES,
     help='Chunk size used by zarr to write out objects')
+@click.option('-l', '--log-filepath', default=None,
+    help='Write logging output to a log file')
 def main(filepath, var_name, creds_filepath, s3_uri, bucket_name, zarr_path,
-        chunk_size_mbytes):
+        chunk_size_mbytes, log_filepath):
     """Console script for dte_zarr_gen."""
 
+    if log_filepath is not None:
+        logging.basicConfig(filename=log_filepath,
+                    format='%(asctime)s %(name)s [%(levelname)s]: %(message)s',
+                    encoding='utf-8', 
+                    level=logging.INFO)
+        
+    log.info("Checking object store credentials ...")
     with open(os.path.expandvars(creds_filepath)) as creds_file:
         creds = json.load(creds_file)
 

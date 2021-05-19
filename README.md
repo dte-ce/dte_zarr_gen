@@ -7,14 +7,10 @@
 
 [![Documentation](https://readthedocs.org/projects/dte-zarr-gen/badge/?version=latest)](https://dte-zarr-gen.readthedocs.io/en/latest/?badge=latest)
 
-
-
-
 Generate zarr formated data on object store from source netCDF files for DTE project
 
 
-* Free software: y
-* Documentation: https://dte-zarr-gen.readthedocs.io.
+* Free software: BSD licence
 
 
 ## Features

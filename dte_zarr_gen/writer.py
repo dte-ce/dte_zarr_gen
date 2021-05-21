@@ -7,6 +7,8 @@ __contact__ = "philip.kershaw@stfc.ac.uk"
 __copyright__ = "Copyright 2021 United Kingdom Research and Innovation"
 __license__ = "BSD - see LICENSE file in top-level package directory"
 import math
+import os
+import json
 import logging
 
 import xarray as xr
@@ -18,7 +20,7 @@ DEF_CHUNK_SIZE_MBYTES = 100
 log = logging.getLogger(__name__)
 
 def create_zarr(file_path, var_name, s3_key, s3_secret, s3_uri, bucket_name,
-                zarr_path, chunk_size_mbytes=DEF_CHUNK_SIZE_MBYTES):
+                zarr_path, chunking_filepath=None):
     '''Create zarr on Caringo object store based on input file(s)'''
 
     log.info(f"Opening {file_path} ...")
@@ -26,14 +28,24 @@ def create_zarr(file_path, var_name, s3_key, s3_secret, s3_uri, bucket_name,
     # Aggregate over time axis  
     ds = xr.open_mfdataset(file_path, combine='nested', concat_dim='time')
 
-    # Apply Ag's chunking alg
-    chunk_size_bytes = chunk_size_mbytes * MEGABYTE
-    n_bytes = ds[var_name].nbytes
-    time_chunk = math.ceil(len(ds.time)/math.ceil(n_bytes/chunk_size_bytes))
+    if chunking_filepath is None:
+        # Apply Ag's chunking alg as default
+        log.info('Applying default chunking on time axis')
+        chunk_size_bytes = DEF_CHUNK_SIZE_MBYTES * MEGABYTE
+        n_bytes = ds[var_name].nbytes
+        time_chunk = math.ceil(len(ds.time)/math.ceil(n_bytes/chunk_size_bytes))
 
-    log.info(f"Applying rechunking with time chunk {time_chunk} ...")
+        chunking = {'time': time_chunk}
+    else:
+        # Apply custom chunking from input JSON file
+        log.info(f'Applying custom chunking based on input file "'
+                '{chunking_filepath}"')
+        with open(os.path.expandvars(chunking_filepath)) as chunking_file:
+            chunking = json.load(chunking_file)
 
-    ds_chunked = ds.chunk({'time': time_chunk})
+    log.info(f"Applying rechunking with chunk sizes {chunking} ...")
+    ds_chunked = ds.chunk(chunking)
+    log.info("Rechunked dataset: {!r}".format(ds_chunked))
 
     fs = s3fs.S3FileSystem(
                     anon=False,
@@ -47,7 +59,7 @@ def create_zarr(file_path, var_name, s3_key, s3_secret, s3_uri, bucket_name,
         fs.mkdir(bucket_name)
     else:
         log.info(f"Using existing bucket {bucket_name}")
-        
+
     zarr_path = f"{bucket_name}/{zarr_path}"
 
     s3_store = s3fs.S3Map(root=zarr_path, s3=fs)

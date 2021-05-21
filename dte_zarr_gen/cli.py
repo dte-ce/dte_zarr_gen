@@ -12,7 +12,7 @@ import json
 import os
 import logging
 
-from dte_zarr_gen.writer import create_zarr, DEF_CHUNK_SIZE_MBYTES
+from dte_zarr_gen.writer import create_zarr
 
 log = logging.getLogger(__name__)
 
@@ -34,12 +34,13 @@ DEF_CREDS_FILEPATH = os.path.join(THIS_DIR, DEF_CREDS_FILENAME)
     help='Variable from netCDF source files to be written out to zarr')
 @click.option('-c', '--creds-filepath', required=True,
     help='File path to JSON-formatted file containing S3 "key" and "secret"')
-@click.option('-m', '--chunk-size-mbytes', default=DEF_CHUNK_SIZE_MBYTES,
-    help='Chunk size used by zarr to write out objects')
+@click.option('-m', '--chunking-filepath', default=None,
+    help='Chunking file - set size for each chunk as key value pairs in a JSON '
+        'file')
 @click.option('-l', '--log-filepath', default=None,
     help='Write logging output to a log file')
 def main(filepath, var_name, creds_filepath, s3_uri, bucket_name, zarr_path,
-        chunk_size_mbytes, log_filepath):
+        chunking_filepath, log_filepath):
     """Console script for dte_zarr_gen."""
 
     if log_filepath is not None:
@@ -53,7 +54,7 @@ def main(filepath, var_name, creds_filepath, s3_uri, bucket_name, zarr_path,
         creds = json.load(creds_file)
 
     create_zarr(filepath, var_name, creds['key'], creds['secret'], s3_uri, 
-                bucket_name, zarr_path, chunk_size_mbytes=chunk_size_mbytes)
+                bucket_name, zarr_path, chunking_filepath=chunking_filepath)
 
     return 0
 

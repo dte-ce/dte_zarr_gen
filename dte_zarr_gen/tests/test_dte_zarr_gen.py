@@ -8,6 +8,8 @@ __contact__ = 'philip.kershaw@stfc.ac.uk'
 __copyright__ = "Copyright 2018 United Kingdom Research and Innovation"
 __license__ = "y"
 import os
+from os.path import join
+from sys import path
 
 import pytest
 from click.testing import CliRunner
@@ -35,6 +37,7 @@ def test_command_line_interface():
         "-b", "pjk_test2",
         "-o", "tasmax_day_UKESM1-0-LL_1pctCO2_r1i1p1f2_gn_19500101-19991230.zarr",
         "-c", os.path.join(test_data_dir, "creds.json"),
+        "-m", os.path.join(test_data_dir, "chunking.json"),
         "-l", os.path.join(test_data_dir, "output.log")
     ]
     run_result = runner.invoke(cli.main, cl_args)

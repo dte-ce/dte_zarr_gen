@@ -15,7 +15,24 @@ Generate zarr formated data on object store from source netCDF files for DTE pro
 
 ## Features
 
-* TODO
+Example invocation:
+
+    $ dte_zarr_gen -f 'tasmax*.nc' -n tasmax -u http://esa-dte-o.s3.jc.rl.ac.uk/ -b tasmax_bucket -o tasmax_day.zarr -c objectstore-creds.json -m ./chunking.json -l ./output.log
+
+Example object store credentials file:
+
+    {
+        "key": "mykey",
+        "secret": "mysecret"
+    }
+
+Example chunking file:
+
+    {
+        "time": 100,
+        "lon": 50,
+        "lat": 50
+    }
 
 # Credits
 

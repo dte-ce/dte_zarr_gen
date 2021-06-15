@@ -6,7 +6,7 @@ Generate zarr formated data on object store from source netCDF files for DTE pro
 
 ## Installation
 
-    pip install git+https://github.com/dte-ce/dte_zarr_gen#egg=dte_zarr_gen
+    $ pip install git+https://github.com/dte-ce/dte_zarr_gen#egg=dte_zarr_gen
 
 ## Features
 

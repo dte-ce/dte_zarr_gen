@@ -1,17 +1,12 @@
 # dte_zarr_gen
 
-
-[![Pypi](https://img.shields.io/pypi/v/dte_zarr_gen.svg)](https://pypi.python.org/pypi/dte_zarr_gen)
-
-[![Travis](https://img.shields.io/travis/philipkershaw/dte_zarr_gen.svg)](https://travis-ci.org/philipkershaw/dte_zarr_gen)
-
-[![Documentation](https://readthedocs.org/projects/dte-zarr-gen/badge/?version=latest)](https://dte-zarr-gen.readthedocs.io/en/latest/?badge=latest)
-
 Generate zarr formated data on object store from source netCDF files for DTE project
-
 
 * Free software: BSD licence
 
+## Installation
+
+    pip install git+https://github.com/dte-ce/dte_zarr_gen#egg=dte_zarr_gen
 
 ## Features
 
